@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_msgType(t *testing.T) {
+func Test_toMsgType(t *testing.T) {
 	var tests = []struct {
 		name     string
 		data     []byte
@@ -17,7 +17,6 @@ func Test_msgType(t *testing.T) {
 			data:     []byte{0},
 			expected: "Unspecified",
 		},
-
 		{
 			name:     "Discover",
 			data:     []byte{1},
@@ -72,7 +71,32 @@ func Test_msgType(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, msgType(tc.data), tc.expected)
+			assert.Equal(t, tc.expected, toMsgType(tc.data))
+		})
+	}
+}
+
+func Test_toMac(t *testing.T) {
+	var tests = []struct {
+		name     string
+		data     []byte
+		expected string
+	}{
+		{
+			name:     "f8:b5:4d:d7:15:3f",
+			data:     []byte{248, 181, 77, 215, 21, 63}, // dec -> binary split into 4 bit blocks conver to hex (248 -> 11111000 -> 1111 && 1000 -> f8
+			expected: "f8:b5:4d:d7:15:3f",
+		},
+		{
+			name:     "empty",
+			data:     []byte{}, // dec -> binary split into 4 bit blocks conver to hex (248 -> 11111000 -> 1111 && 1000 -> f8
+			expected: "",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, toMac(tc.data))
 		})
 	}
 }

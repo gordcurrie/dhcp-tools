@@ -18,7 +18,7 @@ func ToString(o layers.DHCPOption) string {
 		return fmt.Sprintf("%s", o.Data)
 
 	case layers.DHCPOptMessageType: // msgType
-		return msgType(o.Data)
+		return toMsgType(o.Data)
 
 	case layers.DHCPOptSubnetMask, layers.DHCPOptServerID, layers.DHCPOptBroadcastAddr,
 		layers.DHCPOptSolicitAddr, layers.DHCPOptRequestIP, layers.DHCPOptRouter, layers.DHCPOptDNS: // net.IP
@@ -45,7 +45,7 @@ func ToString(o layers.DHCPOption) string {
 
 const invalid = "INVALID"
 
-func msgType(data []byte) string {
+func toMsgType(data []byte) string {
 	if len(data) != 1 {
 		return invalid
 	}
