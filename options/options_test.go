@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_toMsgType(t *testing.T) {
+func Test_decodeMsgType(t *testing.T) {
 	var tests = []struct {
 		name     string
 		data     []byte
@@ -71,12 +71,12 @@ func Test_toMsgType(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.expected, toMsgType(tc.data))
+			assert.Equal(t, tc.expected, decodeMsgType(tc.data))
 		})
 	}
 }
 
-func Test_toMac(t *testing.T) {
+func Test_decodeMac(t *testing.T) {
 	var tests = []struct {
 		name     string
 		data     []byte
@@ -96,7 +96,142 @@ func Test_toMac(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.expected, toMac(tc.data))
+			assert.Equal(t, tc.expected, decodeMac(tc.data))
+		})
+	}
+}
+
+func Test_decodeIP(t *testing.T) {
+	var tests = []struct {
+		name     string
+		data     []byte
+		expected string
+	}{
+		{
+			name:     "192.168.5.4",
+			data:     []byte{192, 168, 5, 4},
+			expected: "192.168.5.4",
+		},
+		{
+			name:     "less than 4 octets",
+			data:     []byte{},
+			expected: "INVALID",
+		},
+		{
+			name:     "more than 4 octets",
+			data:     []byte{192, 168, 5, 4, 3},
+			expected: "INVALID",
+		},
+		{
+			name:     "localhost",
+			data:     []byte{127, 0, 0, 1},
+			expected: "127.0.0.1",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, decodeIP(tc.data))
+		})
+	}
+}
+
+func Test_decodeUint32(t *testing.T) {
+	var tests = []struct {
+		name     string
+		data     []byte
+		expected string
+	}{
+		{
+			name:     "86400",
+			data:     []byte{0, 1, 81, 128},
+			expected: "86400", // bit shifting fun (1 * 256 * 256) + (81 * 256) + (128)
+		},
+		{
+			name:     "less than 4 bytes",
+			data:     []byte{},
+			expected: "INVALID",
+		},
+		{
+			name:     "more than 4 bytes",
+			data:     []byte{1, 1, 1, 1, 1},
+			expected: "INVALID",
+		},
+		{
+			name:     "1",
+			data:     []byte{0, 0, 0, 1},
+			expected: "1",
+		},
+		{
+			name:     "256",
+			data:     []byte{0, 0, 1, 0},
+			expected: "256",
+		},
+		{
+			name:     "65536",
+			data:     []byte{0, 1, 0, 0},
+			expected: "65536",
+		},
+		{
+			name:     "16777216",
+			data:     []byte{1, 0, 0, 0},
+			expected: "16777216",
+		},
+		{
+			name:     "4294967295",
+			data:     []byte{255, 255, 255, 255},
+			expected: "4294967295", // (255 * 256 * 256 * 256) + (255 * 256 * 256) + (255 * 256) + 255
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, decodeUint32(tc.data))
+		})
+	}
+}
+
+func Test_decodeUint16(t *testing.T) {
+	var tests = []struct {
+		name     string
+		data     []byte
+		expected string
+	}{
+		{
+			name:     "1500",
+			data:     []byte{5, 220},
+			expected: "1500", // more easier bit shifting (5 * 256) + 220
+		},
+		{
+			name:     "less than 2 bytes",
+			data:     []byte{},
+			expected: "INVALID",
+		},
+		{
+			name:     "more than 2 bytes",
+			data:     []byte{1, 1, 1, 1, 1},
+			expected: "INVALID",
+		},
+		{
+			name:     "1",
+			data:     []byte{0, 1},
+			expected: "1",
+		},
+		{
+			name:     "256",
+			data:     []byte{1, 0},
+			expected: "256",
+		},
+		{
+			name:     "65535",
+			data:     []byte{255, 255},
+			expected: "65535",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, decodeUint16(tc.data))
 		})
 	}
 }
