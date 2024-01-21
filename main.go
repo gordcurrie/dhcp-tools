@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/derailed/tcell/v2"
+	"github.com/derailed/tview"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
@@ -17,20 +19,42 @@ const (
 	promisc = true  // try and capture everything
 	snapLen = 65535 // max uint16
 	// dev     = "wlp170s0" // TODO: change this
-	dev = "eth0"
+	dev = "any"
 )
 
 func main() {
 	log.Println("dhcp-tools")
 
+	iface := ""
 	devs, err := pcap.FindAllDevs()
 	if err != nil {
 		log.Fatalf("could not find devices, err: %v\n", err)
 	}
 
+	app := tview.NewApplication()
+	list := tview.NewList()
+	list.ShowSecondaryText(false)
+	list.SetBorder(true)
+	list.SetTitle("Select Interface:")
+	list.SetWrapAround(true)
+	list.SetBackgroundColor(tcell.ColorBlack)
+	list.SetMainTextColor(tcell.ColorWhite)
+	list.SetSelectedTextColor(tcell.ColorGray)
+	for _, d := range devs {
+		list.AddItem(d.Name, "", 0, nil)
+	}
+	list.SetSelectedFunc(func(i int, name string, _ string, _ rune) {
+		iface = name
+		app.Stop()
+	})
+
+	if err := app.SetRoot(list, true).EnableMouse(true).Run(); err != nil {
+		panic(err)
+	}
+
 	found := false
 	for _, d := range devs {
-		if d.Name == dev {
+		if d.Name == iface {
 			found = true
 			break
 		}
@@ -40,7 +64,7 @@ func main() {
 		log.Fatalf("target interface not found")
 	}
 
-	handle, err := pcap.OpenLive(dev, snapLen, promisc, pcap.BlockForever)
+	handle, err := pcap.OpenLive(iface, snapLen, promisc, pcap.BlockForever)
 	if err != nil {
 		log.Fatalf("could not open live, err: %v\n", err)
 	}
