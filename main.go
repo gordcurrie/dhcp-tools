@@ -14,9 +14,10 @@ import (
 )
 
 const (
-	promisc = true       // try and capture everything
-	snapLen = 65535      // max uint16
-	dev     = "wlp170s0" // TODO: change this
+	promisc = true  // try and capture everything
+	snapLen = 65535 // max uint16
+	// dev     = "wlp170s0" // TODO: change this
+	dev = "eth0"
 )
 
 func main() {

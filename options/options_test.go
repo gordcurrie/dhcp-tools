@@ -235,3 +235,64 @@ func Test_decodeUint16(t *testing.T) {
 		})
 	}
 }
+
+func Test_decodeVendorOptions(t *testing.T) {
+	var tests = []struct {
+		name     string
+		data     []byte
+		expected string
+	}{
+		{
+			name:     "gordcurrie.com",
+			data:     []byte{241, 14, 103, 111, 114, 100, 99, 117, 114, 114, 105, 101, 46, 99, 111, 109},
+			expected: "code: 241 len: 14 data: gordcurrie.com",
+		},
+		{
+			name: "two vendor options",
+			data: []byte{241, 14, 103, 111, 114, 100, 99, 117, 114, 114, 105, 101, 46, 99, 111, 109,
+				242, 13, 103, 111, 114, 100, 99, 117, 114, 114, 105, 101, 46, 99, 111},
+			expected: "code: 241 len: 14 data: gordcurrie.com\ncode: 242 len: 13 data: gordcurrie.co",
+		},
+		{
+			name:     "empty",
+			data:     []byte{},
+			expected: "INVALID",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, decodeVendorOptions(tc.data))
+		})
+	}
+}
+
+func Test_decodeOptionParams(t *testing.T) {
+	var tests = []struct {
+		name     string
+		data     []byte
+		expected string
+	}{
+		{
+			name:     "single",
+			data:     []byte{43},
+			expected: "VendorOption (43)",
+		},
+		{
+			name:     "multiple",
+			data:     []byte{43, 44},
+			expected: "VendorOption (43),\nNetBIOSOverTCPNS (44)",
+		},
+		{
+			name:     "empty",
+			data:     []byte{},
+			expected: "",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, decodeOptionParams(tc.data))
+		})
+	}
+}

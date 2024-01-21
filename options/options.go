@@ -26,7 +26,7 @@ func ToString(o layers.DHCPOption) string {
 
 	case layers.DHCPOptT1, layers.DHCPOptT2, layers.DHCPOptLeaseTime, layers.DHCPOptPathMTUAgingTimeout,
 		layers.DHCPOptARPTimeout, layers.DHCPOptTCPKeepAliveInt: // uint32
-		return decodeUint32(o.Data) + fmt.Sprintf("bytes: %b\n", o.Data)
+		return decodeUint32(o.Data)
 
 	case layers.DHCPOptBootfileSize, layers.DHCPOptDatagramMTU,
 		layers.DHCPOptInterfaceMTU, layers.DHCPOptMaxMessageSize: // uint16
@@ -34,6 +34,9 @@ func ToString(o layers.DHCPOption) string {
 
 	case layers.DHCPOptParamsRequest: // option params
 		return decodeOptionParams(o.Data)
+
+	case layers.DHCPOptVendorOption: // vendor options
+		return decodeVendorOptions(o.Data)
 
 	case layers.DHCPOptClientID: // mac address
 		return decodeMac(o.Data)
@@ -89,5 +92,31 @@ func decodeOptionParams(data []byte) string {
 			buf.WriteString(",\n")
 		}
 	}
+	return buf.String()
+}
+
+func decodeVendorOptions(data []byte) string {
+	if len(data) < 3 {
+		return invalid
+	}
+	buf := &bytes.Buffer{}
+	codeI := 0
+	var lI int
+	var startI int
+	for {
+		lI = codeI + 1
+		startI = lI + 1
+		code := data[codeI]
+		length := data[lI]
+		endI := startI + int(length)
+
+		buf.WriteString(fmt.Sprintf("code: %d len: %d data: %s", code, length, data[startI:endI]))
+		if endI >= len(data)-1 {
+			break
+		}
+		buf.WriteRune('\n')
+		codeI = endI
+	}
+
 	return buf.String()
 }
