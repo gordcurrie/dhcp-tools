@@ -1,10 +1,18 @@
 # dhcp-tools
 
+## Clone
+
+`git clone git@github.com:gordcurrie/dhcp-tools.git`
+
 ## Setup
 
 1. Install libpcap-dev on linux `sudo apt-get install libpcap-dev`
 
 ## Useage
+
+### Sudo
+
+Needs to be run as root to be able to capture packets.
 
 ### Sniff
 
