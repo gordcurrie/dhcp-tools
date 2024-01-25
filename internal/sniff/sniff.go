@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	promisc = true  // try and capture everything
+	promisc = false // promiscuous mode
 	snapLen = 65535 // max uint16
 )
 

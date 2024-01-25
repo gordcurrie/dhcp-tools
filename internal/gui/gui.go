@@ -69,5 +69,4 @@ func RenderPacket(d layers.DHCPv4) {
 	}
 
 	t.Render()
-
 }
