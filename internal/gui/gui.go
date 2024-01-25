@@ -39,7 +39,7 @@ func RenderSelect() string {
 	return iface
 }
 
-func RenderPacket(d layers.DHCPv4) {
+func RenderPacket(d layers.DHCPv4) string {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 	t.AppendRow(table.Row{"Time:", time.Now().Format(time.RFC3339)})
@@ -56,8 +56,6 @@ func RenderPacket(d layers.DHCPv4) {
 	t.AppendRow(table.Row{"NextServerIP:", d.NextServerIP})
 	t.AppendRow(table.Row{"RelayAgentIP:", d.RelayAgentIP})
 	t.AppendRow(table.Row{"ClientHWAddr:", d.ClientHWAddr})
-	t.AppendRow(table.Row{"ServerName:", fmt.Sprintf("%s", d.ServerName)})
-	t.AppendRow(table.Row{"File:", fmt.Sprintf("%s", d.File)})
 
 	t.AppendSeparator()
 	if len(d.Options) > 0 {
@@ -68,5 +66,5 @@ func RenderPacket(d layers.DHCPv4) {
 		}
 	}
 
-	t.Render()
+	return t.Render()
 }

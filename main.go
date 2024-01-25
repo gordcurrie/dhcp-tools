@@ -1,16 +1,7 @@
 package main
 
-import (
-	"log"
-
-	"github.com/gordcurrie/dhcp-tools/internal/gui"
-	"github.com/gordcurrie/dhcp-tools/internal/sniff"
-)
+import "github.com/gordcurrie/dhcp-tools/cmd"
 
 func main() {
-	log.Println("dhcp-tools")
-
-	iface := gui.RenderSelect()
-
-	sniff.Sniff(iface)
+	cmd.Execute()
 }

@@ -2,6 +2,7 @@ package sniff
 
 import (
 	"log"
+	"os"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
@@ -10,11 +11,23 @@ import (
 )
 
 const (
-	promisc = false // promiscuous mode
-	snapLen = 65535 // max uint16
+	promisc  = false                 // promiscuous mode
+	snapLen  = 65535                 // max uint16
+	bFFliter = "port  67 or port 68" // dhcp traffic should be all over port 67 or 68
 )
 
-func Sniff(iface string) {
+func Sniff(iface, output string) {
+	var outputFile *os.File
+	var err error
+
+	if output != "" {
+		outputFile, err = os.OpenFile(output, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Printf("error: could not decode packet, err: %v\n", err)
+		}
+
+	}
+
 	handle, err := pcap.OpenLive(iface, snapLen, promisc, pcap.BlockForever)
 	if err != nil {
 		log.Fatalf("could not open live, err: %v\n", err)
@@ -22,7 +35,7 @@ func Sniff(iface string) {
 
 	defer handle.Close()
 
-	err = handle.SetBPFFilter("port  67 or port 68")
+	err = handle.SetBPFFilter(bFFliter)
 	if err != nil {
 		log.Fatalf("could not set BF Filter, err: %v\n", err)
 	}
@@ -39,7 +52,10 @@ func Sniff(iface string) {
 					log.Printf("error: could not decode packet, err: %v\n", err)
 				}
 
-				gui.RenderPacket(d)
+				o := gui.RenderPacket(d)
+				if outputFile != nil {
+					outputFile.WriteString(o)
+				}
 			}
 		}
 	}
