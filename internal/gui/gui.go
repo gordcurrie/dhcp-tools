@@ -6,40 +6,34 @@ import (
 	"os"
 	"time"
 
-	"github.com/gdamore/tcell/v2"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 	"github.com/gordcurrie/dhcp-tools/internal/options"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/rivo/tview"
+	"github.com/manifoldco/promptui"
 )
 
 func RenderSelect() string {
-	iface := ""
 	devs, err := pcap.FindAllDevs()
 	if err != nil {
 		log.Fatalf("could not find devices, err: %v\n", err)
 	}
 
-	app := tview.NewApplication()
-	list := tview.NewList()
-	list.ShowSecondaryText(false)
-	list.SetBorder(true)
-	list.SetTitle("Select Interface:")
-	list.SetWrapAround(true)
-	list.SetBackgroundColor(tcell.ColorBlack)
-	list.SetMainTextColor(tcell.ColorWhite)
-	list.SetSelectedTextColor(tcell.ColorGray)
+	devNames := []string{}
 	for _, d := range devs {
-		list.AddItem(d.Name, "", 0, nil)
+		devNames = append(devNames, d.Name)
 	}
-	list.SetSelectedFunc(func(i int, name string, _ string, _ rune) {
-		iface = name
-		app.Stop()
-	})
 
-	if err := app.SetRoot(list, true).EnableMouse(true).Run(); err != nil {
-		panic(err)
+	promt := promptui.Select{
+		Label: "Select Interface",
+		Items: devNames,
+	}
+
+	_, iface, err := promt.Run()
+
+	if err != nil {
+		log.Printf("failed to read select err: %v\n", err)
+		return ""
 	}
 
 	return iface
