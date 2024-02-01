@@ -10,33 +10,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// sniffCmd represents the sniff command
-var sniffCmd = &cobra.Command{
-	Use:   "sniff",
-	Short: "sniffs DHCP traffic",
-	Long:  `Sniffs local traffic filtering out dhcp packets and displaying them`,
-	Args:  cobra.MaximumNArgs(1),
+// sendCmd represents the send command
+var sendCmd = &cobra.Command{
+	Use:   "send",
+	Short: "send dhcp command on selected interface",
+	Long:  `send dhcp command on selected interface`,
 	Run: func(cmd *cobra.Command, args []string) {
-		sniffDhcp(args)
+		send()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(sniffCmd)
+	rootCmd.AddCommand(sendCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// sniffCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// sendCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	sniffCmd.Flags().BoolVarP(&capture, "capture", "c", false, "outputs data to passed file")
+	// sendCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func sniffDhcp(args []string) {
-	iface := gui.RenderInterfaceSelect()
+func send() {
+	file := gui.RenderFilesSelect()
 
-	sniff.Sniff(iface, capture)
+	iFace := gui.RenderInterfaceSelect()
+
+	sniff.Send(iFace, file)
+
 }
