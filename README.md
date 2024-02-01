@@ -20,6 +20,12 @@ Sniffs available packets for DHCP traffic.
 
 `sudo dhcp-tools sniff`
 
-Pass optional `-o` `--output` flag with a path to output file to store output.
+Pass optional `-c` `--capture` flag will capture files in `$HOME/.dhcp-tools/captures`
 
-`sudo dhcp-tools sniff -o ./test.txt`
+`sudo dhcp-tools sniff -c`
+
+### Send
+
+Sends a selected previously captured packet on the selected interface.
+
+`sudo dhcp-tools send`
