@@ -1,15 +1,18 @@
-package sniff
+package packet
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 	"github.com/gordcurrie/dhcp-tools/internal/env"
 	"github.com/gordcurrie/dhcp-tools/internal/gui"
+	"github.com/gordcurrie/dhcp-tools/internal/options"
 )
 
 const (
@@ -51,9 +54,10 @@ func Sniff(iface string, capture bool) {
 				if err != nil {
 					log.Printf("error: could not decode packet, err: %v\n", err)
 				}
-				fileHandle := gui.RenderPacket(d)
+				gui.RenderPacket(d)
 
 				if capture {
+					fileHandle := genFileName(d)
 					path := filepath.Join(capturesPath, fileHandle+".dat")
 					err = os.WriteFile(path, p.Data(), 0644)
 					if err != nil {
@@ -63,6 +67,24 @@ func Sniff(iface string, capture bool) {
 			}
 		}
 	}
+}
+
+func genFileName(d layers.DHCPv4) string {
+	var hostname string
+	var messageType string
+	if len(d.Options) > 0 {
+
+		for _, op := range d.Options {
+			if op.Type == layers.DHCPOptHostname {
+				hostname = options.ToString(op)
+			}
+			if op.Type == layers.DHCPOptMessageType {
+				messageType = options.ToString(op)
+			}
+		}
+	}
+
+	return fmt.Sprintf("%s_%s_%s", hostname, messageType, time.Now().Format("2006-01-02-15:04:05.06"))
 }
 
 func Send(iface, file string) {

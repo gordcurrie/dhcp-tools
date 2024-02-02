@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"github.com/gordcurrie/dhcp-tools/internal/gui"
-	"github.com/gordcurrie/dhcp-tools/internal/sniff"
+	"github.com/gordcurrie/dhcp-tools/internal/packet"
 	"github.com/spf13/cobra"
 )
 
@@ -35,10 +35,10 @@ func init() {
 }
 
 func send() {
-	file := gui.RenderFilesSelect()
+	file := gui.SelectFile()
 
-	iFace := gui.RenderInterfaceSelect()
+	iFace := gui.SelectInterface()
 
-	sniff.Send(iFace, file)
+	packet.Send(iFace, file)
 
 }

@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"github.com/gordcurrie/dhcp-tools/internal/gui"
-	"github.com/gordcurrie/dhcp-tools/internal/sniff"
+	"github.com/gordcurrie/dhcp-tools/internal/packet"
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +36,7 @@ func init() {
 }
 
 func sniffDhcp(args []string) {
-	iface := gui.RenderInterfaceSelect()
+	iface := gui.SelectInterface()
 
-	sniff.Sniff(iface, capture)
+	packet.Sniff(iface, capture)
 }

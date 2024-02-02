@@ -5,6 +5,9 @@ import (
 	"path/filepath"
 )
 
+// GetCapturesPath determines the path to where packet captures
+// should be stored and creates teh directory if it does not already
+// exist. Should be in $HOME/.dhcp-tools/captures
 func GetCapturesPath() (string, error) {
 	var homeDir string
 	sudoUser := os.Getenv("SUDO_USER")

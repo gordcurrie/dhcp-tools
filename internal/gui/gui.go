@@ -14,7 +14,9 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func RenderFilesSelect() string {
+// SelectFile presents a list of captured files for the user
+// to choose from and returns the selected file name.
+func SelectFile() string {
 	dir, err := env.GetCapturesPath()
 	if err != nil {
 		log.Printf("failed to get captures path: %v\n", err)
@@ -32,21 +34,12 @@ func RenderFilesSelect() string {
 		fileNames = append(fileNames, f.Name())
 	}
 
-	promt := promptui.Select{
-		Label: "Select Interface",
-		Items: fileNames,
-	}
-
-	_, file, err := promt.Run()
-	if err != nil {
-		log.Printf("failed to read select err: %v\n", err)
-		return ""
-	}
-
-	return file
+	return choose(fileNames, "Select Capture")
 }
 
-func RenderInterfaceSelect() string {
+// SelectInterface presents a list of network interfaces for the user
+// to choose from and returns the selected interface.
+func SelectInterface() string {
 	devs, err := pcap.FindAllDevs()
 	if err != nil {
 		log.Fatalf("could not find devices, err: %v\n", err)
@@ -57,24 +50,28 @@ func RenderInterfaceSelect() string {
 		devNames = append(devNames, d.Name)
 	}
 
+	return choose(devNames, "Select Interface")
+}
+
+// choose presents list of strings to user and returns the
+// selected string.
+func choose(input []string, label string) string {
 	promt := promptui.Select{
-		Label: "Select Interface",
-		Items: devNames,
+		Label: label,
+		Items: input,
 	}
 
-	_, iface, err := promt.Run()
-
+	_, choice, err := promt.Run()
 	if err != nil {
 		log.Printf("failed to read select err: %v\n", err)
 		return ""
 	}
 
-	return iface
+	return choice
 }
 
-func RenderPacket(d layers.DHCPv4) string {
-	var hostname string
-	var messageType string
+// RenderPacket outputs the packet data to stander out formatted as a table.
+func RenderPacket(d layers.DHCPv4) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 	t.AppendRow(table.Row{"Time:", time.Now().Format(time.RFC3339)})
@@ -98,18 +95,8 @@ func RenderPacket(d layers.DHCPv4) string {
 
 		for _, op := range d.Options {
 			t.AppendRow(table.Row{"", "Option:", fmt.Sprintf("%s (%d)", op.Type.String(), op.Type), options.ToString(op)})
-			if op.Type == layers.DHCPOptHostname {
-				hostname = options.ToString(op)
-			}
-			if op.Type == layers.DHCPOptMessageType {
-				messageType = options.ToString(op)
-			}
 		}
 	}
 
-	fileHandle := fmt.Sprintf("%s_%s_%s", hostname, messageType, time.Now().Format("2006-01-02-15:04:05.06"))
-
 	t.Render()
-
-	return fileHandle
 }
