@@ -106,11 +106,10 @@ func Send(iface, file string) {
 	}
 	defer handle.Close()
 
+	log.Printf("sending %s on %s", file, iface)
+
 	err = handle.WritePacketData(dat)
 	if err != nil {
 		log.Fatalf("error: could not write live, err: %v\n", err)
 	}
-
-	log.Printf("sending %s on %s", file, iface)
-
 }

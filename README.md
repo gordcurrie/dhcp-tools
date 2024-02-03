@@ -29,3 +29,9 @@ Pass optional `-c` `--capture` flag will capture files in `$HOME/.dhcp-tools/cap
 Sends a selected previously captured packet on the selected interface.
 
 `sudo dhcp-tools send`
+
+### Clear
+
+Deletes all files in the captures directory.
+
+`sudo dhcp-tools clear`

@@ -1,6 +1,8 @@
 package env
 
 import (
+	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -27,4 +29,19 @@ func GetCapturesPath() (string, error) {
 	}
 
 	return newpath, nil
+}
+
+func CleanCaptures() {
+	p, err := GetCapturesPath()
+	if err != nil {
+		log.Fatalf("error could not get captures path, err: %s", err)
+	}
+	dir, err := ioutil.ReadDir(p)
+	if err != nil {
+		log.Fatalf("error could not read dir, err: %s", err)
+	}
+
+	for _, f := range dir {
+		os.RemoveAll(filepath.Join(p, f.Name()))
+	}
 }
