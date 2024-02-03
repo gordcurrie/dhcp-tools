@@ -10,6 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_GetCapturesPath(t *testing.T) {
+	path, err := env.GetCapturesPath()
+	assert.NoError(t, err)
+	assert.Contains(t, path, ".dhcp-tools/captures")
+}
+
 func Test_CleanCaptures(t *testing.T) {
 	tempDirPath := filepath.Join(".", "test_captures")
 	createSampleCaptures(t, tempDirPath, 2)
