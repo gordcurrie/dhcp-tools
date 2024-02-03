@@ -5,6 +5,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"log"
+
 	"github.com/gordcurrie/dhcp-tools/internal/gui"
 	"github.com/gordcurrie/dhcp-tools/internal/packet"
 	"github.com/spf13/cobra"
@@ -35,10 +37,19 @@ func init() {
 }
 
 func send() {
-	file := gui.SelectFile()
+	file, err := gui.SelectFile()
+	if err != nil {
+		log.Fatalf("error: could not select file, err: %v", err)
+	}
 
-	iFace := gui.SelectInterface()
+	iFace, err := gui.SelectInterface()
+	if err != nil {
+		log.Fatalf("error: could not select interface, err: %v", err)
+	}
 
-	packet.Send(iFace, file)
+	err = packet.Send(iFace, file)
+	if err != nil {
+		log.Fatalf("error: could not send packet, err: %v\n", err)
+	}
 
 }

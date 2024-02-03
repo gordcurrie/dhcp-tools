@@ -5,6 +5,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"log"
+
 	"github.com/gordcurrie/dhcp-tools/internal/gui"
 	"github.com/gordcurrie/dhcp-tools/internal/packet"
 	"github.com/spf13/cobra"
@@ -36,7 +38,13 @@ func init() {
 }
 
 func sniffDhcp(args []string) {
-	iface := gui.SelectInterface()
+	iface, err := gui.SelectInterface()
+	if err != nil {
+		log.Fatalf("error: could not select interface, err: %v\n", err)
+	}
 
-	packet.Sniff(iface, capture)
+	err = packet.Sniff(iface, capture)
+	if err != nil {
+		log.Fatalf("error: could not sniff packets, err: %v\n", err)
+	}
 }

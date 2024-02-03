@@ -21,26 +21,26 @@ const (
 	bFFliter = "port  67 or port 68" // dhcp traffic should be all over port 67 or 68
 )
 
-func Sniff(iface string, capture bool) {
+func Sniff(iface string, capture bool) error {
 	var capturesPath string
 	var err error
 	if capture {
 		capturesPath, err = env.GetCapturesPath()
 		if err != nil {
-			log.Fatalf("error: could not get captures path, err: %v\n", err)
+			return err
 		}
 	}
 
 	handle, err := pcap.OpenLive(iface, snapLen, promisc, pcap.BlockForever)
 	if err != nil {
-		log.Fatalf("error: could not open live, err: %v\n", err)
+		return err
 	}
 
 	defer handle.Close()
 
 	err = handle.SetBPFFilter(bFFliter)
 	if err != nil {
-		log.Fatalf("error: could not set BF Filter, err: %v\n", err)
+		return err
 	}
 	log.Println("awaiting packets...")
 
@@ -67,13 +67,14 @@ func Sniff(iface string, capture bool) {
 			}
 		}
 	}
+
+	return nil
 }
 
 func genFileName(d layers.DHCPv4) string {
 	var hostname string
 	var messageType string
 	if len(d.Options) > 0 {
-
 		for _, op := range d.Options {
 			if op.Type == layers.DHCPOptHostname {
 				hostname = options.ToString(op)
@@ -87,22 +88,22 @@ func genFileName(d layers.DHCPv4) string {
 	return fmt.Sprintf("%s_%s_%s", hostname, messageType, time.Now().Format("2006-01-02-15:04:05.06"))
 }
 
-func Send(iface, file string) {
+func Send(iface, file string) error {
 	capturesPath, err := env.GetCapturesPath()
 	if err != nil {
-		log.Fatalf("error: could not get captures path, err: %v\n", err)
+		return err
 	}
 
 	path := filepath.Join(capturesPath, file)
 
 	dat, err := os.ReadFile(path)
 	if err != nil {
-		log.Fatalf("error: could not get captures path, err: %v\n", err)
+		return err
 	}
 
 	handle, err := pcap.OpenLive(iface, snapLen, promisc, pcap.BlockForever)
 	if err != nil {
-		log.Fatalf("error: could not open live, err: %v\n", err)
+		return err
 	}
 	defer handle.Close()
 
@@ -110,6 +111,7 @@ func Send(iface, file string) {
 
 	err = handle.WritePacketData(dat)
 	if err != nil {
-		log.Fatalf("error: could not write live, err: %v\n", err)
+		return err
 	}
+	return nil
 }

@@ -2,7 +2,6 @@ package gui
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -16,17 +15,15 @@ import (
 
 // SelectFile presents a list of captured files for the user
 // to choose from and returns the selected file name.
-func SelectFile() string {
+func SelectFile() (string, error) {
 	dir, err := env.GetCapturesPath()
 	if err != nil {
-		log.Printf("failed to get captures path: %v\n", err)
-		return ""
+		return "", err
 	}
 
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		log.Printf("failed to read select err: %v\n", err)
-		return ""
+		return "", err
 	}
 
 	fileNames := []string{}
@@ -39,10 +36,10 @@ func SelectFile() string {
 
 // SelectInterface presents a list of network interfaces for the user
 // to choose from and returns the selected interface.
-func SelectInterface() string {
+func SelectInterface() (string, error) {
 	devs, err := pcap.FindAllDevs()
 	if err != nil {
-		log.Fatalf("could not find devices, err: %v\n", err)
+		return "", err
 	}
 
 	devNames := []string{}
@@ -55,7 +52,7 @@ func SelectInterface() string {
 
 // choose presents list of strings to user and returns the
 // selected string.
-func choose(input []string, label string) string {
+func choose(input []string, label string) (string, error) {
 	promt := promptui.Select{
 		Label: label,
 		Items: input,
@@ -63,11 +60,10 @@ func choose(input []string, label string) string {
 
 	_, choice, err := promt.Run()
 	if err != nil {
-		log.Printf("failed to read select err: %v\n", err)
-		return ""
+		return "", err
 	}
 
-	return choice
+	return choice, nil
 }
 
 // RenderPacket outputs the packet data to stander out formatted as a table.
