@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      with: 
-        apt: libpcap-dev
+      with:
+        packages: libpcap-dev
 
     - name: Set up Go
       uses: actions/setup-go@v4
