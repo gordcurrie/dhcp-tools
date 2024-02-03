@@ -8,10 +8,6 @@
 
 1. Install libpcap-dev on linux `sudo apt-get install libpcap-dev`
 
-## Build
-
-`go build`
-
 ## Useage
 
 ### Sudo

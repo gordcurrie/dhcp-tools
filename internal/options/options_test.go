@@ -254,6 +254,11 @@ func Test_decodeVendorOptions(t *testing.T) {
 			expected: "code: 241 len: 14 data: gordcurrie.com\ncode: 242 len: 13 data: gordcurrie.co",
 		},
 		{
+			name:     "non-encapsulated",
+			data:     []byte{143, 150, 142, 160, 55, 164, 157, 157, 154, 163},
+			expected: "malformed value: \x8f\x96\x8e\xa07\xa4\x9d\x9d\x9a\xa3",
+		},
+		{
 			name:     "empty",
 			data:     []byte{},
 			expected: "INVALID",

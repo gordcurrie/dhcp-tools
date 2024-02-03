@@ -5,6 +5,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"log"
+
 	"github.com/gordcurrie/dhcp-tools/internal/env"
 	"github.com/spf13/cobra"
 )
@@ -34,5 +36,13 @@ func init() {
 }
 
 func clearCaptures() {
-	env.CleanCaptures()
+	path, err := env.GetCapturesPath()
+	if err != nil {
+		log.Fatalf("error, could not get captures path. err: %v", err)
+	}
+
+	err = env.CleanCaptures(path)
+	if err != nil {
+		log.Fatalf("error, could not get captures path. err: %v", err)
+	}
 }

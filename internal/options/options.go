@@ -111,7 +111,7 @@ func decodeVendorOptions(data []byte) string {
 		endI := startI + int(length)
 		// precheck to catch malformed option values which don't prefix with code and len
 		if endI > len(data) {
-			buf.WriteString(fmt.Sprintf("malformed option: %s", data))
+			buf.WriteString(fmt.Sprintf("malformed value: %s", data))
 			break
 		}
 
