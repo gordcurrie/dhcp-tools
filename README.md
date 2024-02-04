@@ -1,5 +1,7 @@
 # dhcp-tools
 
+[![codecov](https://codecov.io/gh/gordcurrie/dhcp-tools/graph/badge.svg?token=LW1TN6I2WJ)](https://codecov.io/gh/gordcurrie/dhcp-tools)
+
 ![dhcp-tools](https://github.com/gordcurrie/gifs/blob/main/dhcp-tools.gif)
 
 ## Clone
