@@ -16,9 +16,9 @@ import (
 )
 
 const (
-	promisc  = false                 // promiscuous mode
-	snapLen  = 65535                 // max uint16
-	bFFliter = "port  67 or port 68" // dhcp traffic should be all over port 67 or 68
+	promisc = false                 // promiscuous mode
+	snapLen = 65535                 // max uint16
+	bpf     = "port  67 or port 68" // Berkeley Packt Filter format, dhcp traffic should be all over port 67 or 68
 )
 
 func Sniff(iface string, capture bool) error {
@@ -38,7 +38,7 @@ func Sniff(iface string, capture bool) error {
 
 	defer handle.Close()
 
-	err = handle.SetBPFFilter(bFFliter)
+	err = handle.SetBPFFilter(bpf)
 	if err != nil {
 		return err
 	}
