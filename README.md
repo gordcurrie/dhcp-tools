@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/gordcurrie/dhcp-tools/graph/badge.svg?token=LW1TN6I2WJ)](https://codecov.io/gh/gordcurrie/dhcp-tools)
 [![Build](https://github.com/gordcurrie/dhcp-tools/actions/workflows/go.yml/badge.svg)](https://github.com/gordcurrie/dhcp-tools/actions/workflows/go.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/gordcurrie/dhcp-tools)](https://goreportcard.com/report/github.com/gordcurrie/dhcp-tools)
 
 ![dhcp-tools](https://github.com/gordcurrie/gifs/blob/main/dhcp-tools.gif)
 
