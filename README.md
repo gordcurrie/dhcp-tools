@@ -24,20 +24,24 @@ Needs to be run as root to be able to capture packets.
 
 Sniffs available packets for DHCP traffic.
 
-`sudo dhcp-tools sniff`
+`sudo ./dhcp-tools sniff`
 
 Pass optional `-c` `--capture` flag will capture files in `$HOME/.dhcp-tools/captures`
 
-`sudo dhcp-tools sniff -c`
+`sudo ./dhcp-tools sniff -c`
 
 ### Send
 
 Sends a selected previously captured packet on the selected interface.
 
-`sudo dhcp-tools send`
+`sudo ./dhcp-tools send`
 
 ### Clear
 
 Deletes all files in the captures directory.
 
-`sudo dhcp-tools clear`
+`sudo ./dhcp-tools clear`
+
+### NOTE
+
+This guide assumes you are building from source. If you wish to `go install` you will have to ensure that the path to the binary is included in sudo's $PATH.
