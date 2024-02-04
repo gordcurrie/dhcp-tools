@@ -1,5 +1,7 @@
 # dhcp-tools
 
+![dhcp-tools](https://github.com/gordcurrie/gifs/blob/main/dhcp-tools.gif)
+
 ## Clone
 
 `git clone git@github.com:gordcurrie/dhcp-tools.git`
