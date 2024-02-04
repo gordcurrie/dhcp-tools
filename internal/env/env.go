@@ -7,7 +7,7 @@ import (
 )
 
 // GetCapturesPath determines the path to where packet captures
-// should be stored and creates teh directory if it does not already
+// should be stored and creates the directory if it does not already
 // exist. Should be in $HOME/.dhcp-tools/captures
 func GetCapturesPath() (string, error) {
 	var homeDir string
