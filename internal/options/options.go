@@ -8,7 +8,7 @@ import (
 	"github.com/google/gopacket/layers"
 )
 
-// String returns a string version of a DHCP Option.
+// ToString returns a string version of a DHCP Option.
 func ToString(o layers.DHCPOption) string {
 	switch o.Type {
 
